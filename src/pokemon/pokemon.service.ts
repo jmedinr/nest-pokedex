@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
@@ -10,6 +11,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Pokemon } from './entities/pokemon.entity';
 import { Model } from 'mongoose';
 import { isMongoId, isNumberString } from 'class-validator';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
@@ -30,8 +32,16 @@ export class PokemonService {
     }
   }
 
-  async findAll() {
-    return await this.pokemonModel.find();
+  async findAll(offset: number, limit: number) {
+    
+    return await this.pokemonModel
+      .find()
+      .limit(limit)
+      .skip(offset)
+      .sort({
+        no: 1
+      })
+      .select('-__v');
   }
 
   async findOne(term: string): Promise<Pokemon> {
@@ -129,9 +139,11 @@ export class PokemonService {
         throw new InternalServerErrorException(error.message);
       });
 
-      if (deletedCount === 0) {
-        throw new NotFoundException(`Could not find pokemon with given id ${id} in the database. Please make sure the id is correct.`);
-      }
+    if (deletedCount === 0) {
+      throw new NotFoundException(
+        `Could not find pokemon with given id ${id} in the database. Please make sure the id is correct.`,
+      );
+    }
 
     return deletedCount > 0;
   }
