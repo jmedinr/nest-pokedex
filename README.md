@@ -30,12 +30,23 @@
 ```
 $ npm install -g @nestjs/cli
 ```
-4. Levantar la base de datos
+
+4. Copiar el archivo ```.env.template``` y renombar la copia a ```
+.env```
+
+7. Llenar las variables de entorno definidas en el ```.env```
+
+4. Levantar la base de datos y la app
 ```
-$ docker-compose up -d
+$ docker-compose -f docker-compose.yaml up --build (only first time)
+----------------------------Or-----------------------------------------
+$ docker-compose -f docker-compose.yaml up -d (every time)
 ```
-3. Ejecutar `npm start:dev` o `yarn start:Dev`
-4. Ver el servidor en http://localhost:3000
+5. Reconstruir la base de datos con la semilla
+```
+http://localhost:3000/api/v2/seed
+```
+
 
 
 ## Stack Usado

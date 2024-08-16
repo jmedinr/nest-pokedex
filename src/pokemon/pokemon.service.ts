@@ -11,7 +11,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Pokemon } from './entities/pokemon.entity';
 import { Model } from 'mongoose';
 import { isMongoId, isNumberString } from 'class-validator';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
@@ -33,7 +32,7 @@ export class PokemonService {
   }
 
   async findAll(offset: number, limit: number) {
-    
+
     return await this.pokemonModel
       .find()
       .limit(limit)

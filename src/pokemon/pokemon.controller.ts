@@ -15,10 +15,21 @@ import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('pokemon')
 export class PokemonController {
-  constructor(private readonly pokemonService: PokemonService) {}
+
+  private defaultLimit: number;
+  private defaultOffset: number;
+  constructor(
+    private readonly pokemonService: PokemonService,
+    private readonly configService: ConfigService,
+  ) {
+
+    this.defaultLimit = this.configService.get<number>('defaultLimit');
+    this.defaultOffset = this.configService.get<number>('defaultOffset');
+  }
 
   @Post()
   @HttpCode(HttpStatus.OK)
@@ -28,7 +39,10 @@ export class PokemonController {
 
   @Get()
   findAll(@Query() paginationDto: PaginationDto) {
-    const { limit = 10, offset = 0 } = paginationDto;
+    const {
+      limit = this.defaultLimit,
+      offset = this.defaultOffset,
+    } = paginationDto;
     return this.pokemonService.findAll(offset, limit);
   }
 
